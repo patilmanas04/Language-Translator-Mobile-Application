@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -32,9 +33,10 @@ public class MainActivity extends AppCompatActivity {
 
     private Spinner fromSpinner, toSpinner;
     private TextInputEditText sourceEdt;
-    private ImageView micIV;
+    private ImageView micIV, speakerIcon;
     private MaterialButton translateBtn;
     private TextView translatedTV;
+    private TextToSpeech tts;
     String fromLanguages[] = {"From", "English", "Afrikaans", "Arabic", "Belarusian", "Bulgarian", "Bengali", "Catalan", "Czech", "Welsh", "Hindi", "Urdu"};
     String toLanguages[] = {"To", "English", "Afrikaans", "Arabic", "Belarusian", "Bulgarian", "Bengali", "Catalan", "Czech", "Welsh", "Hindi", "Urdu"};
 
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         micIV = findViewById(R.id.idIVMic);
         translateBtn = findViewById(R.id.idBtnTranslate);
         translatedTV = findViewById(R.id.idTVTranslatedTV);
+        speakerIcon = findViewById(R.id.idSpeaker);
 
         fromSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -118,6 +121,22 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }));
+
+        speakerIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if(status==TextToSpeech.SUCCESS){
+                            tts.setLanguage(Locale.US);
+                            tts.setSpeechRate(1.0f);
+                            tts.speak(translatedTV.getText().toString(), TextToSpeech.QUEUE_ADD, null);
+                        }
+                    }
+                });
+            }
+        });
     }
 
     @Override
